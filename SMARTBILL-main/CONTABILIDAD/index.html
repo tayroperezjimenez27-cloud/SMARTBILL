@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SmartBill Pro - Facturación Inteligente</title>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <script type="importmap">
+    {
+      "imports": {
+        "chart.js": "https://esm.sh/chart.js/auto"
+      }
+    }
+    </script>
+</head>
+<body>
+
+    <!-- SISTEMA DE LOGIN -->
+    <div id="login-wrapper" style="background: linear-gradient(180deg, #87CEEB 0%, #000000 100%); box-shadow: inset 0 0 100px rgba(0,0,0,0.5), 0 20px 40px rgba(0,0,0,0.3); perspective: 1000px;">
+        <button id="btn-lang-toggle-login" class="lang-toggle-btn"><i class="fas fa-language"></i> <span class="lang-label">Idioma / Language</span></button>
+        <div id="form-login" class="login-form glass-smoked">
+            <div class="login-brand">
+                <i class="fas fa-cloud-sun"></i>
+                <h2>SmartBill Pro</h2>
+                <p>Sistema de Gestión Inteligente</p>
+            </div>
+            <!-- Login Form -->
+            <div id="login-form-section">
+                <div class="login-input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="login-user" class="login-input" placeholder="Usuario">
+                </div>
+                <div class="login-input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="login-pass" class="login-input" placeholder="Clave (6 dígitos)" maxlength="6">
+                </div>
+                <button id="btn-submit-login" class="btn-login-submit">INICIAR SESIÓN</button>
+                <p class="switch-link" id="switch-to-register">No tienes cuenta? Registrarse</p>
+            </div>
+            <!-- Register Form -->
+            <div id="register-form-section" style="display: none;">
+                <div class="login-input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="register-fullname" class="login-input" placeholder="Nombre completo">
+                </div>
+                <div class="login-input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="register-user" class="login-input" placeholder="Usuario">
+                </div>
+                <div class="login-input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="register-pass" class="login-input" placeholder="Clave (6 dígitos)" maxlength="6">
+                </div>
+                <button id="btn-submit-register" class="btn-login-submit">REGISTRARSE</button>
+                <p class="switch-link" id="switch-to-login">Ya tienes cuenta? Iniciar Sesión</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ESTRUCTURA PRINCIPAL -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+    <aside id="sidebar">
+        <div class="brand">
+            <i class="fas fa-file-invoice-dollar" style="font-size: 24px;"></i>
+            <span>SmartBill</span>
+        </div>
+        <div class="slogan">ERP & POS en la Nube</div>
+        
+        <nav id="nav-menu">
+            <div class="nav-group-title">Resumen</div>
+            <button data-section="dashboard" class="nav-btn active"><i class="fas fa-chart-line"></i> Panel de control</button>
+            
+            <div class="nav-group-title">Operaciones</div>
+            <button data-section="cash-register" class="nav-btn"><i class="fas fa-cash-register"></i> Punto de Venta</button>
+            <button data-section="banks" class="nav-btn"><i class="fas fa-university"></i> Movimientos Bancos</button>
+            
+            <div class="nav-group-title">Catálogos</div>
+            <button data-section="clients" class="nav-btn"><i class="fas fa-users"></i> Mis Clientes</button>
+            <button data-section="inventory" class="nav-btn"><i class="fas fa-box-open"></i> Inventario</button>
+            
+            <div class="nav-group-title">Sistema</div>
+            <button data-section="config" class="nav-btn"><i class="fas fa-cog"></i> Configuración</button>
+            <button data-section="data-explorer" class="nav-btn"><i class="fas fa-database"></i> Explorador de Datos</button>
+
+            <div class="nav-group-title">Informes</div>
+            <button id="btn-daily-analysis" class="nav-btn" style="background: rgba(255,255,255,0.1); border: 1px dashed rgba(255,255,255,0.3); margin-top: 10px;">
+                <i class="fas fa-microchip"></i> Análisis del Día
+            </button>
+
+            <div class="nav-group-title">Sesión</div>
+            <button id="btn-logout" class="nav-btn" style="background: rgba(255,255,255,0.1); border: 1px dashed rgba(255,255,255,0.3); margin-top: 10px;">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </button>
+        </nav>
+    </aside>
+
+    <main>
+        <header>
+            <div class="header-left">
+                <button class="hamburger" id="hamburger-btn"><i class="fas fa-bars"></i></button>
+                <div class="header-title"><h1 id="page-title">Panel de control</h1></div>
+            </div>
+            <div class="header-actions">
+                <button id="btn-lang-toggle-app" class="btn btn-outline btn-sm"><i class="fas fa-language"></i> <span class="lang-label">Idioma</span></button>
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Buscar transacción...">
+                </div>
+                <div class="avatar-group">
+                    <span class="admin-name">Administrador</span>
+                    <div class="avatar">
+                        <div class="glow"></div>
+                        <div class="logo-3d">
+                            <div class="icon"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-scroll">
+            <!-- SECCIONES -->
+            <section id="dashboard" class="section-view active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-blue"><i class="fas fa-wallet"></i></div>
+                        <div class="stat-info"><h3>Ventas Hoy</h3><div class="value" id="kpi-sales-today">$0.00</div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon bg-green"><i class="fas fa-file-invoice-dollar"></i></div>
+                        <div class="stat-info"><h3>Comprobantes</h3><div class="value" id="kpi-count-today">0</div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon bg-orange"><i class="fas fa-exclamation-triangle"></i></div>
+                        <div class="stat-info"><h3>Stock Bajo</h3><div class="value" id="kpi-lowstock">0</div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon bg-purple"><i class="fas fa-shield-halved"></i></div>
+                        <div class="stat-info"><h3>Seguridad</h3><div class="value">Activa</div></div>
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header"><h2>Tendencia de Ventas (7 días)</h2></div>
+                    <div style="height: 320px;"><canvas id="salesChart"></canvas></div>
+                </div>
+            </section>
+
+            <section id="cash-register" class="section-view">
+                <div class="pos-grid">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h2>Gestión de Ventas</h2>
+                        </div>
+                        <div style="text-align: center; padding: 40px 20px; border: 2px dashed var(--border); border-radius: 12px; background: #fdfdfd;">
+                            <i class="fas fa-boxes-stacked" style="font-size: 3rem; color: var(--primary); margin-bottom: 20px; display: block;"></i>
+                            <button class="btn btn-primary btn-lg" id="btn-inventory-trigger" style="padding: 15px 40px; font-size: 1.1rem; border-radius: 50px; box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.3);">
+                                <i class="fas fa-search-plus"></i> PRODUCTO EN INVENTARIO
+                            </button>
+                            <p style="margin-top: 15px; color: var(--text-light); font-size: 0.9rem;">Haz clic para buscar y ver detalles del producto</p>
+                        </div>
+                        
+                        <div style="margin-top: 30px;">
+                            <h3 style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 10px;">Búsqueda Rápida</h3>
+                            <input type="text" id="pos-search-input" placeholder="Escribe nombre o SKU..." class="form-control">
+                            <div id="pos-quick-results" style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 5px;"></div>
+                        </div>
+                    </div>
+                    <div class="panel ticket-panel">
+                        <div class="panel-header"><h2>Generar Factura</h2></div>
+                        <div class="form-group">
+                            <label>Cliente Receptor</label>
+                            <select id="pos-client-select" class="form-control"></select>
+                        </div>
+                        <div class="ticket-list-container">
+                            <table id="pos-ticket-table">
+                                <thead><tr><th>Producto</th><th>Cant.</th><th>Subt.</th><th></th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <div class="ticket-summary">
+                            <div class="summary-row">
+                                <span>Subtotal:</span>
+                                <span id="pos-subtotal">$0.00</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>IVA (%)</span>
+                                <input type="number" id="pos-tax-rate" value="19" class="summary-input" onchange="window.app.renderTicket()">
+                            </div>
+                            <div class="summary-row">
+                                <span>Descuento ($)</span>
+                                <input type="number" id="pos-discount" value="0" class="summary-input" onchange="window.app.renderTicket()">
+                            </div>
+                            <div class="summary-row total">
+                                <span>VALOR TOTAL:</span>
+                                <span id="pos-total">$0.00</span>
+                            </div>
+                        </div>
+                        <div class="ticket-actions">
+                            <button id="btn-cobrar" class="btn btn-primary btn-block"><i class="fas fa-file-invoice-dollar"></i> PROCESAR Y DESCARGAR PDF</button>
+                            <button id="btn-cancelar-ticket" class="btn btn-outline btn-block">LIMPIAR TODO</button>
+                            <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+                                <button class="save-btn-3d" onclick="document.getElementById('btn-cobrar').click()" title="Procesar Venta">
+                                    <div class="icon"></div>
+                                    <div class="glow"></div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="inventory" class="section-view">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>Gestión de Inventario</h2>
+                        <button class="btn btn-primary" onclick="window.app.openModal('product')"><i class="fas fa-plus"></i> Añadir Item</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="inventory-table">
+                            <thead><tr><th>SKU</th><th>Nombre</th><th>Precio</th><th>Stock</th><th>Estado</th><th>Acciones</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="clients" class="section-view">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>Cartera de Clientes</h2>
+                        <button class="btn btn-primary" onclick="window.app.openModal('client')"><i class="fas fa-user-plus"></i> Nuevo Cliente</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="clients-table">
+                            <thead><tr><th>Nombre</th><th>Identificación</th><th>Teléfono</th><th>Email</th><th>Acciones</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="banks" class="section-view">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>Cuentas Bancarias</h2>
+                        <button class="btn btn-primary" onclick="window.app.openModal('bank')"><i class="fas fa-plus"></i> Vincular Cuenta</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="banks-table">
+                            <thead><tr><th>Entidad</th><th>Tipo / Número</th><th>Saldo Disponible</th><th>Acciones</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="data-explorer" class="section-view">
+                <div class="panel sql-panel">
+                    <div class="panel-header">
+                        <h2 id="t-explorer-title">Terminal de Consulta SQL (JSON)</h2>
+                        <div class="badge" style="background: var(--danger);" id="t-dev-mode">MODO DESARROLLADOR</div>
+                    </div>
+                    
+                    <div class="explorer-container">
+                        <div class="explorer-sidebar">
+                            <div class="sidebar-label" id="t-tables-label">TABLAS DISPONIBLES:</div>
+                            <button class="explorer-tab active" onclick="window.app.selectExplorerTable('inventory', this)">INVENTARIO (inventory)</button>
+                            <button class="explorer-tab" onclick="window.app.selectExplorerTable('clients', this)">CLIENTES (clients)</button>
+                            <button class="explorer-tab" onclick="window.app.selectExplorerTable('sales', this)">VENTAS (sales)</button>
+                            <button class="explorer-tab" onclick="window.app.selectExplorerTable('banks', this)">BANCOS (banks)</button>
+                            <button class="explorer-tab" onclick="window.app.selectExplorerTable('users', this)">USUARIOS (users)</button>
+                        </div>
+                        <div class="explorer-content">
+                            <div class="sql-query-line">
+                                <span class="sql-keyword">SQL QUERY:</span>
+                            </div>
+                            <textarea id="explorer-sql-editor" spellcheck="false" class="sql-editor" placeholder="Ejemplo: SELECT * FROM inventory;"></textarea>
+                            <div class="sql-status-bar">
+                                <span id="t-sql-status">Listo para ejecutar consulta...</span>
+                            </div>
+                            <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end;">
+                                <button class="btn btn-outline" onclick="window.app.refreshExplorer()"><i class="fas fa-sync"></i> <span id="t-sql-refresh">REFRESCAR</span></button>
+                                <button class="btn btn-primary" style="background: #10b981;" onclick="window.app.executeSQLQuery()"><i class="fas fa-terminal"></i> <span id="t-sql-execute">EJECUTAR QUERY</span></button>
+                            </div>
+                            <div id="sql-results-container" style="margin-top: 15px; display: none;">
+                                <h4>Resultados:</h4>
+                                <pre id="sql-results" style="background: #f1f5f9; padding: 10px; border-radius: 5px; max-height: 200px; overflow-y: auto;"></pre>
+                            </div>
+                            <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <button class="btn btn-outline" onclick="window.app.exportData()"><i class="fas fa-download"></i> <span id="btn-export">EXPORTAR</span></button>
+                                    <button class="btn btn-outline" onclick="window.app.importData()"><i class="fas fa-upload"></i> <span id="btn-import">IMPORTAR</span></button>
+                                    <button class="btn btn-primary" onclick="window.app.generateInvoice()"><i class="fas fa-file-invoice-dollar"></i> <span id="btn-invoice">FACTURA</span></button>
+                                </div>
+                                <button class="save-btn-3d" onclick="window.app.generateInvoice()" title="Generar Factura">
+                                    <div class="icon"></div>
+                                    <div class="glow"></div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="config" class="section-view">
+                <div class="panel">
+                    <div class="panel-header"><h2>Perfil de la Empresa</h2></div>
+                    <div class="config-grid">
+                        <div class="form-group"><label>Razón Social</label><input id="cfg-name" class="form-control"></div>
+                        <div class="form-group"><label>NIT / RUC</label><input id="cfg-nit" class="form-control"></div>
+                        <div class="form-group"><label>Teléfono</label><input id="cfg-phone" class="form-control"></div>
+                        <div class="form-group"><label>Email Corporativo</label><input id="cfg-email" class="form-control"></div>
+                        <div class="form-group full-width"><label>Dirección Fiscal</label><input id="cfg-address" class="form-control"></div>
+                        <div class="form-group full-width"><label>Leyenda Factura</label><input id="cfg-footer" class="form-control"></div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+                            <button class="btn btn-primary" onclick="window.app.saveConfig()">ACTUALIZAR DATOS</button>
+                            <button class="save-btn-3d" onclick="window.app.saveConfig()" title="Guardar Configuración">
+                                <div class="icon"></div>
+                                <div class="glow"></div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- MODALES -->
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-title">Editar</h3>
+                <button class="btn-close" onclick="window.app.closeModal()">&times;</button>
+            </div>
+            <div id="modal-body" class="modal-body"></div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="window.app.closeModal()">Cancelar</button>
+                <button class="btn btn-primary" id="modal-confirm-btn">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="product-list-overlay" class="modal-overlay">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>Catálogo de Productos</h3>
+                <button class="btn-close" onclick="document.getElementById('product-list-overlay').classList.remove('open')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="product-list-menu-container" class="product-list-grid">
+                    <!-- Dinámico -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="invoice-modal-overlay" class="modal-overlay">
+        <div class="invoice-container">
+            <div class="invoice-toolbar no-print">
+                <span>Comprobante Generado</span>
+                <div>
+                    <button class="btn btn-primary btn-sm" onclick="window.print()"><i class="fas fa-download"></i> Descargar</button>
+                    <button class="btn btn-outline btn-sm" style="color: white; border-color: white;" onclick="document.getElementById('invoice-modal-overlay').classList.remove('open')">Cerrar</button>
+                </div>
+            </div>
+            <div id="invoice-content" class="invoice-paper"></div>
+        </div>
+    </div>
+
+    <!-- SISTEMA DE ALERTAS PERSONALIZADO -->
+    <div id="custom-alert-overlay" class="modal-overlay" style="z-index: 9999;">
+        <div class="modal error-alert">
+            <div class="modal-header" style="background: var(--danger); color: white;">
+                <h3><i class="fas fa-exclamation-triangle"></i> ERROR (CORRIGLO)</h3>
+            </div>
+            <div class="modal-body">
+                <p id="custom-alert-message" style="font-weight: 600; text-align: center; font-size: 1.1rem; color: var(--danger);"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" style="background: var(--danger);" onclick="document.getElementById('custom-alert-overlay').classList.remove('open')">ENTENDIDO</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE LOGIN PARA EXPLORADOR DE DATOS -->
+    <div id="data-explorer-login-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="explorer-modal-title">Iniciar Sesión</h3>
+                <button class="btn-close" onclick="document.getElementById('data-explorer-login-modal').classList.remove('open')">&times;</button>
+            </div>
+            <div id="explorer-modal-body" class="modal-body">
+                <!-- Login Form -->
+                <div id="explorer-login-form" class="explorer-form">
+                    <div class="form-group">
+                        <label id="explorer-username-label">Usuario</label>
+                        <input type="text" id="explorer-username" class="form-control" placeholder="Usuario">
+                    </div>
+                    <div class="form-group">
+                        <label id="explorer-password-label">Clave</label>
+                        <input type="password" id="explorer-password" class="form-control" placeholder="Clave">
+                    </div>
+                    <button id="explorer-login-btn" class="btn btn-primary btn-block">Iniciar Sesión</button>
+                    <p class="switch-link" id="explorer-switch-to-register">No tienes cuenta? Registrarse</p>
+                </div>
+                <!-- Register Form -->
+                <div id="explorer-register-form" class="explorer-form" style="display: none;">
+                    <div class="form-group">
+                        <label id="explorer-reg-username-label">Usuario</label>
+                        <input type="text" id="explorer-reg-username" class="form-control" placeholder="Usuario">
+                    </div>
+                    <div class="form-group">
+                        <label id="explorer-reg-password-label">Clave</label>
+                        <input type="password" id="explorer-reg-password" class="form-control" placeholder="Clave">
+                    </div>
+                    <button id="explorer-register-btn" class="btn btn-primary btn-block">Registrarse</button>
+                    <p class="switch-link" id="explorer-switch-to-login">Ya tienes cuenta? Iniciar Sesión</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>
